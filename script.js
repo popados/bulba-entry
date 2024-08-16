@@ -1,22 +1,35 @@
 
 //GLOBAL URLS
 
-let index_url = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=150"
+let index_url = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=1302"
+
+
+
 let next_counter = 2
-
 let prev_counter = 0
-
 var pokemon_index = 1;
 
-let pokemon_species_url = "https://pokeapi.co/api/v2/pokemon-species/" + pokemon_index.toString(); 
 
-let pokemon_name_url = "https://pokeapi.co/api/v2/pokemon/" + pokemon_index.toString() 
+const getpokemonurls = (pokemonindex) => {
+    return {
+      species: `https://pokeapi.co/api/v2/pokemon-species/${pokemonindex}`,
+      pokemon: `https://pokeapi.co/api/v2/pokemon/${pokemonindex}`,
+      image: `https://raw.githubusercontent.com/pokeapi/sprites/master/sprites/pokemon/other/official-artwork/${pokemonindex}.png`,
+    };
+  };
 
-let pokemon_img_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/" + pokemon_index.toString() + ".png"
+
+  
+let pokemon_species_url = "https://pokeapi.co/api/v2/pokemon-species/" + pokemon_index
+let pokemon_name_url = "https://pokeapi.co/api/v2/pokemon/" + pokemon_index 
+let pokemon_img_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/" + pokemon_index + ".png"
+
+
+
+
 
 let pokemon_next_img_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/" + next_counter.toString() + ".png"
 let pokemon_prev_img_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/" + prev_counter.toString() + ".png"
-
 
 
 function updateImageUrl() {
@@ -35,25 +48,6 @@ function updateImageUrl() {
     pokemon_next_img_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/" + next_counter.toString() + ".png"
 }
 
-// let pokemon_data = []
-
-// pokemon = DATA[0].results
-
-// pokemon_names = []
-
-// console.log(pokemon)
-
-
-//let ivy_name = pokemon_names[1]
-
-
-
-//name_plate.append(pokemon_names[1], text_plate )
-// const response = await fetch("https://pokeapi.co/api/v2/pokemon-species/1");
-// var pokemon_data = await response.json();
-// console.log(pokemon_data)
-
-
 description_data = []
 pokemon_names = []
 
@@ -69,12 +63,11 @@ function setData() {
     
 
     if (pokemon_index >= 0 ) {
-        pokemon_index = 1
-        let text = pokemon_data.flavor_text_entries[1].flavor_text;
+        let text = pokemon_data.flavor_text_entries[0].flavor_text;
         div[0].append(text, div)
     }
     else {
-        let text = pokemon_data.flavor_text_entries[1].flavor_text;
+        let text = pokemon_data.flavor_text_entries[0].flavor_text;
         div[0].append(text, div)
     }
 
@@ -82,19 +75,21 @@ function setData() {
 
 
 
-function updateData() {
+async function updateData() {
+
+    description_data = await pokemonCall(pokemon_species_url)
     let div = this.document.getElementsByClassName("information")
 
     document.getElementsByClassName("information")[0].innerHTML = ''
 
     if (pokemon_index >= 0 ) {
-        pokemon_index = 1
-        let text = pokemon_data.flavor_text_entries[1].flavor_text;
-        div[0].append(text, p)
-    }
+        let text = description_data.flavor_text_entries[0].flavor_text;
+        div[0].append(text, div)
+    } 
     else {
-        let text = pokemon_data.flavor_text_entries[1].flavor_text;
-        div[0].append(text, p)
+        console.log(text)
+        let text = description_data.flavor_text_entries[0].flavor_text;
+        div[0].append(text,div)
     }
 
 
@@ -129,19 +124,20 @@ function updateName() {
 var next_img = document.getElementById("next-img")
 var portrait_img = document.getElementById("portrait-img")
 var prev_img = document.getElementById("prev-img")
+
 function setImages() {
     portrait_img.src=pokemon_img_url
     next_img.src=pokemon_next_img_url
-    prev_img.src=pokemon_prev_img_url
-
+    prev_img.src=pokemon_img_url
+    
 }
 
 function changeImages() {
     document.getElementById("next-img").src=pokemon_next_img_url
     document.getElementById("portrait-img").src=pokemon_img_url
     document.getElementById("prev-img").src=pokemon_prev_img_url
-
-
+    
+    
 }
 
 
@@ -161,13 +157,10 @@ function prevImage(){
         next_counter--;
         prev_counter--;
     }
-    updateImageUrl()
+    updateImageUrl();
     changeImages();
-    updateName()
-    console.log(pokemon_index)
-    // var img = document.getElementsById("portrait-img")
-    // img.src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/2.png"
-    //window.alert("hit")
+    updateName();
+    updateData();
     return pokemon_index
 }
 
@@ -176,48 +169,29 @@ function nextImage(){
     pokemon_index++;
     next_counter++
     prev_counter++;
-    updateImageUrl()
+    updateImageUrl();
     changeImages();
     updateName();
+    updateData();
     
-    // updateData();
-
-
-
-    // updateData(description_data);
-    // console.log(pokemon_index)
-    // console.log(pokemon_data)
-    // var img = document.getElementsById("portrait-img")
-    // img.src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/2.png"
-    //window.alert("hit")
     return pokemon_index
 }
 
 
-    // console.log(text)
-    
 
 document.addEventListener("DOMContentLoaded", async () => {
     pokemon_data = await pokemonCall(pokemon_species_url);
     pokemon_name_data = await pokemonCall(index_url)
     name_data = await pokemonCall(pokemon_name_url);
-    console.log(name_data.name)
-    console.log(pokemon_name_data.results)
-    console.log(pokemon_data.flavor_text_entries[1])
+
     for (var i = 0; i < pokemon_name_data.results.length; i++) {
-        //console.log(pokemon[i].name)
-        //pokemon_names.push(pokemon[i].name)
+
         pokemon_names.push(pokemon_name_data.results[i])
-        description_data.push(pokemon_data.flavor_text_entries[1])
+        // description_data.push(pokemon_data)
     }
 
-    // console.log(pokemon_data.flavor_text_entries)
-    setData(description_data)
+    setData()
     setImages()
     setName();
 
-    // console.log(description_data)
 })
-
-
-// const element = description_data[0]
