@@ -28,32 +28,38 @@
         </div>
 
 
+        <div class="move-prev">
+            <button class="previous" onClick="prevImage()">Previous</button>
+            <div class="preview-before">
+                <div class="preview-before-pic">
+                    <img id="prev-img" src="" height="75" width="75" />
+                </div>
+            </div>
+        </div>
+        <div id="next" class="move-next">
+            <button class="next" onClick="nextImage()">Next</button>
+            <div class="preview-after">
+                <div class="preview-after-pic">
+                    <img id="next-img" src="" height="75" width="75" />
+                </div>
 
+            </div>
+        </div>
         <div class="information-plate" id="information-plate-background">
-            <div class="move-prev">
-                <button class="previous" onClick="prevImage()">Previous</button>
-                <div class="preview-before">
-                    <div class="preview-before-pic">
-                        <img id="prev-img" src="" height="75" width="75" />
-                    </div>
-                </div>
+            <div>
+                <h3> Description : </h3>
+                <p class="information">
+                </p>
             </div>
-            <div id="next" class="move-next">
-                <button class="next" onClick="nextImage()">Next</button>
-                <div class="preview-after">
-                    <div class="preview-after-pic">
-                        <img id="next-img" src="" height="75" width="75" />
-                    </div>
-                </div>
-            </div>
-            <h3> Description : </h3>
-            <p class="information">
-            </p>
         </div>
-        <div class="pokeball">
-            <div class="red-ball"></div>
-            <div class="white-ball"></div>
-        </div>
+    </div>
+
+
+
+    <div class="pokeball">
+        <div class="red-ball"></div>
+        <div class="white-ball"></div>
+    </div>
     </div>
 
     <script src="script.js"></script>

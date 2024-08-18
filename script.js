@@ -1,28 +1,42 @@
 
 //GLOBAL URLS
 
-let index_url = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=1302"
+const index_url = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=1302"
 
+const baseURL = "https://pokeapi.co/api/v2/"
 
 
 let next_counter = 2
 let prev_counter = 0
-var pokemon_index = 1;
+let pokemon_index = 1;
 
 
-const getpokemonurls = (pokemonindex) => {
-    return {
-      species: `https://pokeapi.co/api/v2/pokemon-species/${pokemonindex}`,
-      pokemon: `https://pokeapi.co/api/v2/pokemon/${pokemonindex}`,
-      image: `https://raw.githubusercontent.com/pokeapi/sprites/master/sprites/pokemon/other/official-artwork/${pokemonindex}.png`,
-    };
+
+const getpokemonUrls = (pokemon_index, type = "") => {
+    
+    
+    if (type === "") {
+        return {
+            species: `${baseURL}pokemon-species/${pokemon_index}`,
+            pokemon: `${baseURL}pokemon/${pokemon_index}`,
+            image: `https://raw.githubusercontent.com/pokeapi/sprites/master/sprites/pokemon/other/official-artwork/${pokemon_index}.png`,
+        };
+    } else if (type === "species") {
+        return `${baseURL}pokemon-species/${pokemon_index}`
+    } else if (type === "pokemon") {
+        return `${baseURL}pokemon/${pokemon_index}`
+    }
+    else if (type === "image") {
+        return `https://raw.githubusercontent.com/pokeapi/sprites/master/sprites/pokemon/other/official-artwork/${pokemon_index}.png`
+    }
+    
   };
 
+//instead of obj - add second param - empty string to paramaterize the search of the obj
 
-  
-let pokemon_species_url = "https://pokeapi.co/api/v2/pokemon-species/" + pokemon_index
-let pokemon_name_url = "https://pokeapi.co/api/v2/pokemon/" + pokemon_index 
-let pokemon_img_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/" + pokemon_index + ".png"
+let pokemon_species_url = getpokemonUrls(pokemon_index,"species")
+let pokemon_name_url = getpokemonUrls(pokemon_index,"pokemon")
+let pokemon_img_url = getpokemonUrls(pokemon_index,"image")
 
 
 
@@ -42,7 +56,7 @@ function updateImageUrl() {
     else {
         pokemon_prev_img_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/" + prev_counter.toString() + ".png"
     }
-    pokemon_species_url = "https://pokeapi.co/api/v2/pokemon-species/" + pokemon_index.toString(); 
+    getpokemonUrls(pokemon_index,"species")
     pokemon_name_url = "https://pokeapi.co/api/v2/pokemon/" + pokemon_index.toString()
     pokemon_img_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/" + pokemon_index.toString() + ".png"
     pokemon_next_img_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/" + next_counter.toString() + ".png"
@@ -77,7 +91,7 @@ function setData() {
 
 async function updateData() {
 
-    description_data = await pokemonCall(pokemon_species_url)
+    description_data = await pokemonCall(getpokemonUrls(pokemon_index,"species"))
     let div = this.document.getElementsByClassName("information")
 
     document.getElementsByClassName("information")[0].innerHTML = ''
@@ -86,13 +100,6 @@ async function updateData() {
         let text = description_data.flavor_text_entries[0].flavor_text;
         div[0].append(text, div)
     } 
-    else {
-        console.log(text)
-        let text = description_data.flavor_text_entries[0].flavor_text;
-        div[0].append(text,div)
-    }
-
-
 
 }
 
@@ -103,7 +110,6 @@ function setName() {
     let text_plate = this.document.createElement("name").innerHTML
 
     name_plate.append(pokemon_names[pokemon_index - 1].name, text_plate)
-
 }
 
 function updateName() {
@@ -180,6 +186,8 @@ function nextImage(){
 
 
 document.addEventListener("DOMContentLoaded", async () => {
+
+
     pokemon_data = await pokemonCall(pokemon_species_url);
     pokemon_name_data = await pokemonCall(index_url)
     name_data = await pokemonCall(pokemon_name_url);
