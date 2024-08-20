@@ -11,19 +11,18 @@ let prev_counter = 0
 let pokemon_index = 1;
 
 
-
 const getpokemonUrls = (pokemon_index, type = "") => {
     
     
     if (type === "") {
         return {
             species: `${baseURL}pokemon-species/${pokemon_index}`,
-            pokemon: `${baseURL}pokemon/${pokemon_index}`,
+            name: `${baseURL}pokemon/${pokemon_index}`,
             image: `https://raw.githubusercontent.com/pokeapi/sprites/master/sprites/pokemon/other/official-artwork/${pokemon_index}.png`,
         };
     } else if (type === "species") {
         return `${baseURL}pokemon-species/${pokemon_index}`
-    } else if (type === "pokemon") {
+    } else if (type === "name") {
         return `${baseURL}pokemon/${pokemon_index}`
     }
     else if (type === "image") {
@@ -35,7 +34,7 @@ const getpokemonUrls = (pokemon_index, type = "") => {
 //instead of obj - add second param - empty string to paramaterize the search of the obj
 
 let pokemon_species_url = getpokemonUrls(pokemon_index,"species")
-let pokemon_name_url = getpokemonUrls(pokemon_index,"pokemon")
+let pokemon_name_url = getpokemonUrls(pokemon_index,"name")
 let pokemon_img_url = getpokemonUrls(pokemon_index,"image")
 
 
@@ -57,13 +56,13 @@ function updateImageUrl() {
         pokemon_prev_img_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/" + prev_counter.toString() + ".png"
     }
     getpokemonUrls(pokemon_index,"species")
-    pokemon_name_url = "https://pokeapi.co/api/v2/pokemon/" + pokemon_index.toString()
+    getpokemonUrls(pokemon_index,"name")
     pokemon_img_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/" + pokemon_index.toString() + ".png"
     pokemon_next_img_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/" + next_counter.toString() + ".png"
 }
 
-description_data = []
-pokemon_names = []
+let description_data
+const pokemon_names = []
 
 pokemon_data = pokemon_species_url
 
@@ -74,16 +73,8 @@ async function pokemonCall(url){
 
 function setData() {
     let div = this.document.getElementsByClassName("information")
-    
-
-    if (pokemon_index >= 0 ) {
-        let text = pokemon_data.flavor_text_entries[0].flavor_text;
-        div[0].append(text, div)
-    }
-    else {
-        let text = pokemon_data.flavor_text_entries[0].flavor_text;
-        div[0].append(text, div)
-    }
+    let text = pokemon_data.flavor_text_entries[0].flavor_text;
+    div[0].append(text)
 
 }
 
@@ -91,18 +82,22 @@ function setData() {
 
 async function updateData() {
 
+
+    //updating and overriding the description_data or pokemon_data
+    //replace p tag with id of info / div with ID
+    //target and fill information
+    //class is for a group items vs ID for a singular entity 
     description_data = await pokemonCall(getpokemonUrls(pokemon_index,"species"))
     let div = this.document.getElementsByClassName("information")
-
-    document.getElementsByClassName("information")[0].innerHTML = ''
-
-    if (pokemon_index >= 0 ) {
-        let text = description_data.flavor_text_entries[0].flavor_text;
-        div[0].append(text, div)
-    } 
-
+    
+    
+    if (pokemon_index >= 0) {
+        //why do i need index of 0
+        this.document.getElementsByClassName("information")[0].innerHTML = ""
+        text = description_data.flavor_text_entries[0].flavor_text
+        div[0].append(text)
+    }
 }
-
 
 function setName() {
     let name_plate = this.document.getElementsByClassName("name-plate")[0]
